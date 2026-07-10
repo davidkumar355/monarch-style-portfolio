@@ -12,8 +12,10 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from database import init_db, seed_db, get_all_projects
 
+# Force Vercel redeployment to pick up new DATABASE_URL environment variables
 # Load environment variables
 load_dotenv()
+
 
 @asynccontextmanager
 async def lifespan(application: FastAPI):
