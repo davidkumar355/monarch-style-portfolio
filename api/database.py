@@ -24,7 +24,10 @@ _raw_url = os.getenv("DATABASE_URL", "sqlite:///./projects.db")
 if os.getenv("VERCEL") and _raw_url.startswith("sqlite"):
     _raw_url = "sqlite:////tmp/projects.db"
 
-DATABASE_URL = _raw_url.replace("postgres://", "postgresql://", 1)
+# Ensure we use pg8000 pure-Python driver for PostgreSQL on Vercel
+DATABASE_URL = _raw_url.replace("postgres://", "postgresql+pg8000://", 1)
+if DATABASE_URL.startswith("postgresql://"):
+    DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+pg8000://", 1)
 
 
 engine = create_engine(DATABASE_URL)

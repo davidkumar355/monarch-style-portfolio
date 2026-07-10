@@ -17,10 +17,14 @@ load_dotenv()
 
 @asynccontextmanager
 async def lifespan(application: FastAPI):
-    """Initialise and seed the SQLite database on server startup."""
-    init_db()
-    seed_db()
+    """Initialise and seed the database on server startup."""
+    try:
+        init_db()
+        seed_db()
+    except Exception as e:
+        print(f"CRITICAL DATABASE INITIALIZATION ERROR: {str(e)}")
     yield
+
 
 app = FastAPI(
     title="Monarch Intelligence Network API",
@@ -70,10 +74,16 @@ def read_root():
 @app.get("/api/projects", response_model=List[Project])
 def get_projects():
     """
-    Returns the full list of ML projects from the SQLite database.
-    Edit backend/database.py to add or update projects.
+    Returns the full list of ML projects from the database.
     """
-    return get_all_projects()
+    try:
+        return get_all_projects()
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Database retrieval failed. System Error: {str(e)}"
+        )
+
 
 @app.post("/api/transmit")
 def transmit_message(payload: TransmissionPayload):
