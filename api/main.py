@@ -2,6 +2,7 @@ import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, EmailStr
 from typing import List, Optional
 from dotenv import load_dotenv
@@ -66,12 +67,43 @@ class Project(BaseModel):
 
 @app.get("/")
 def read_root():
+    """Serves the static index.html frontend directly from FastAPI."""
+    parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    index_path = os.path.join(parent_dir, "index.html")
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
+    if os.path.exists("index.html"):
+        return FileResponse("index.html")
+    
     return {
         "status": "online",
         "system": "Monarch Intelligence Network",
         "access": "granted",
         "documentation": "/docs"
     }
+
+@app.get("/index.html")
+def read_index_html():
+    """Serves index.html directly from FastAPI."""
+    parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    index_path = os.path.join(parent_dir, "index.html")
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
+    if os.path.exists("index.html"):
+        return FileResponse("index.html")
+    raise HTTPException(status_code=404, detail="index.html not found on this node.")
+
+@app.get("/image_0.png")
+def read_image():
+    """Serves the agent profile photo directly from FastAPI."""
+    parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    image_path = os.path.join(parent_dir, "image_0.png")
+    if os.path.exists(image_path):
+        return FileResponse(image_path, media_type="image/png")
+    if os.path.exists("image_0.png"):
+        return FileResponse("image_0.png", media_type="image/png")
+    raise HTTPException(status_code=404, detail="image_0.png not found on this node.")
+
 
 @app.get("/api/projects", response_model=List[Project])
 def get_projects():
