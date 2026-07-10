@@ -104,6 +104,29 @@ def read_image():
         return FileResponse("image_0.png", media_type="image/png")
     raise HTTPException(status_code=404, detail="image_0.png not found on this node.")
 
+@app.get("/logo.png")
+def read_logo():
+    """Serves the logo directly from FastAPI."""
+    parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    logo_path = os.path.join(parent_dir, "logo.png")
+    if os.path.exists(logo_path):
+        return FileResponse(logo_path, media_type="image/png")
+    if os.path.exists("logo.png"):
+        return FileResponse("logo.png", media_type="image/png")
+    raise HTTPException(status_code=404, detail="logo.png not found on this node.")
+
+@app.get("/favicon.ico")
+def read_favicon():
+    """Serves the logo as favicon.ico directly from FastAPI."""
+    parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    logo_path = os.path.join(parent_dir, "logo.png")
+    if os.path.exists(logo_path):
+        return FileResponse(logo_path, media_type="image/png")
+    if os.path.exists("logo.png"):
+        return FileResponse("logo.png", media_type="image/png")
+    raise HTTPException(status_code=404, detail="Favicon not found on this node.")
+
+
 
 @app.get("/api/projects", response_model=List[Project])
 def get_projects():
