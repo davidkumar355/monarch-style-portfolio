@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en" style="scroll-behavior: smooth;">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Monarch Intelligence Network</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/TextPlugin.min.js"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&amp;display=swap"
+        rel="stylesheet" />
+    <style>
+        :root {
+            --bg-base: #0a0a0a;
+            --bg-surface: #111111;
+            --accent-primary: #e8651a;
+            --accent-secondary: #c4a35a;
+            --text-main: #d4cfc8;
+            --font-header: 'Bebas Neue', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        .scanlines {
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+            z-index: 50;
+            transition: opacity 0.1s ease-out, background-position 0.1s ease-out;
+        }
+
+        .noise {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 49;
+        }
+
+        .btn-glow:hover {
+            box-shadow: 0 0 15px 2px rgba(232, 101, 26, 0.4);
+            text-shadow: 0 0 8px rgba(232, 101, 26, 0.6);
+        }
+
+        .vignette {
+            background: radial-gradient(circle at center, transparent 30%, var(--bg-base) 100%);
+        }
+
+        .photo-brackets {
+            position: relative;
+        }
+
+        .photo-brackets::before,
+        .photo-brackets::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--accent-secondary);
+        }
+
+        .photo-brackets::before {
+            top: 0;
+            left: 0;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .photo-brackets::after {
+            bottom: 0;
+            right: 0;
+            border-left: none;
+            border-top: none;
+        }
+
+        .photo-brackets-tr-bl::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--accent-secondary);
+            border-left: none;
+            border-bottom: none;
+        }
+
+        .photo-brackets-tr-bl::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--accent-secondary);
+            border-right: none;
+            border-top: none;
+        }
+
+        .skill-fill {
+            box-shadow: 0 0 10px rgba(232, 101, 26, 0.5);
+        }
+
+        .dossier-card {
+            background: var(--bg-surface);
+            border: 1px solid #222;
+            border-top: 3px solid var(--accent-primary);
+            padding: 24px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .dossier-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 20px rgba(232, 101, 26, 0.3);
+        }
+
+        .stamp {
+            font-family: 'Space Mono', monospace;
+            font-weight: bold;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        .mission-debrief ul {
+            list-style-type: none;
+            padding-left: 1.2em;
+        }
+
+        .mission-debrief ul li {
+            position: relative;
+            margin-bottom: 0.5em;
+        }
+
+        .mission-debrief ul li::before {
+            content: '>';
+            position: absolute;
+            left: -1.2em;
+            color: var(--accent-primary);
+            font-weight: bold;
+        }
+
+        @keyframes glitch {
+            0% {
+                opacity: 1;
+                text-shadow: 1px 0 0 rgba(232, 101, 26, 0.8), -1px 0 0 rgba(196, 163, 90, 0.8);
+            }
+
+            50% {
+                opacity: 0.85;
+                text-shadow: -1px 0 0 rgba(232, 101, 26, 0.8), 1px 0 0 rgba(196, 163, 90, 0.8);
+            }
+
+            100% {
+                opacity: 1;
+                text-shadow: 1px 0 0 rgba(232, 101, 26, 0.8), -1px 0 0 rgba(196, 163, 90, 0.8);
+            }
+        }
+
+        .btn-glitch:hover {
+            animation: glitch 150ms infinite;
+            box-shadow: 0 0 8px rgba(232, 101, 26, 0.3);
+        }
+
+        .secure-input {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid var(--accent-secondary);
+            color: var(--text-main);
+            transition: border-color 0.3s ease;
+        }
+
+        .secure-input:focus {
+            outline: none;
+            border-bottom-color: var(--accent-primary);
+            box-shadow: none;
+        }
+
+        /* Scramble text styling */
+        #decryption-text-target {
+            font-family: 'Space Mono', monospace;
+            color: var(--accent-secondary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            min-width: 300px;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .flicker {
+            text-shadow: 0 0 10px rgba(196, 163, 90, 0.8), 0 0 2px rgba(232, 101, 26, 0.5);
+            opacity: 0.9;
+        }
+
+        /* Routing Anchor Adjustments */
+        section {
+            scroll-margin-top: 80px;
+        }
+
+        /* Scroll Glitch Effect - Updated to remove kinetics */
+        h1,
+        h2,
+        h3,
+        header,
+        .section-header {
+            transition: text-shadow 0.1s ease-out;
+        }
+
+        @keyframes crt-tear {
+            0% {
+                text-shadow: 0 0 0 transparent;
+            }
+
+            20% {
+                text-shadow: -3px 0 rgba(255, 0, 0, 0.8), 3px 0 rgba(0, 255, 255, 0.8);
+            }
+
+            40% {
+                text-shadow: 3px 0 rgba(255, 0, 0, 0.8), -3px 0 rgba(0, 255, 255, 0.8);
+            }
+
+            60% {
+                text-shadow: -3px 0 rgba(255, 0, 0, 0.8), 3px 0 rgba(0, 255, 255, 0.8);
+            }
+
+            80% {
+                text-shadow: 3px 0 rgba(255, 0, 0, 0.8), -3px 0 rgba(0, 255, 255, 0.8);
+            }
+
+            100% {
+                text-shadow: 0 0 0 transparent;
+            }
+        }
+
+        /* TV Static Overlay implementation */
+        .monarch-app::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-image: repeating-radial-gradient(circle at 17% 32%, white, black 0.00085px);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: overlay;
+            transition: opacity 0.1s ease-out;
+        }
+
+        @keyframes tv-static-flash {
+            0% {
+                opacity: 0.05;
+                background-position: 0 0;
+            }
+
+            50% {
+                opacity: 0.15;
+                background-position: 50% 50%;
+            }
+
+            100% {
+                opacity: 0.08;
+                background-position: 100% 100%;
+            }
+        }
+
+        .is-scrolling::after {
+            animation: tv-static-flash 0.15s infinite linear;
+        }
+
+        .is-scrolling header,
+        .is-scrolling h1,
+        .is-scrolling h2,
+        .is-scrolling h3,
+        .is-scrolling .section-header {
+            animation: crt-tear 0.15s infinite linear alternate-reverse !important;
+            will-change: text-shadow;
+        }
+
+        /* Boot Sequence Styles */
+        #boot-sequence {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #0a0a0a;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        #boot-cursor {
+            font-family: 'Space Mono', monospace;
+            font-size: 24px;
+            color: var(--accent-primary);
+        }
+
+        #boot-terminal {
+            position: absolute;
+            top: 0;
+            left: 0;
+            padding: 40px;
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            color: var(--text-main);
+            text-align: left;
+            width: 100%;
+        }
+
+        #boot-terminal div {
+            color: rgba(232, 101, 26, 0.8) !important;
+            font-family: 'Space Mono', monospace !important;
+        }
+
+        #boot-logs {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .boot-log-line {
+            opacity: 0;
+        }
+
+        #boot-clearance {
+            display: inline-block !important;
+            font-family: 'Bebas Neue', sans-serif !important;
+            font-size: 64px !important;
+            color: var(--accent-primary) !important;
+            border: 4px solid var(--accent-primary) !important;
+            padding: 15px 40px !important;
+            letter-spacing: 6px !important;
+            background-color: transparent !important;
+            text-align: center !important;
+            opacity: 0;
+            position: absolute;
+        }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-variant": "#373530",
+                        "primary-container": "#ed691e",
+                        "on-secondary-container": "#d6b469",
+                        "surface-container-lowest": "#0f0e0a",
+                        "outline-variant": "#584238",
+                        "on-tertiary": "#4e2600",
+                        "secondary": "#e5c276",
+                        "surface-container-high": "#2c2a25",
+                        "primary-fixed": "#ffdbcc",
+                        "on-tertiary-container": "#442000",
+                        "on-tertiary-fixed": "#2f1400",
+                        "on-surface": "#e7e2da",
+                        "secondary-container": "#5d4502",
+                        "on-primary-fixed-variant": "#7b2f00",
+                        "tertiary": "#ffb780",
+                        "background": "#15130f",
+                        "tertiary-fixed": "#ffdcc4",
+                        "secondary-fixed": "#ffdf9c",
+                        "inverse-primary": "#a23f00",
+                        "surface-tint": "#ffb695",
+                        "error-container": "#93000a",
+                        "on-surface-variant": "#e0c0b2",
+                        "surface": "#15130f",
+                        "inverse-on-surface": "#32302b",
+                        "tertiary-fixed-dim": "#ffb780",
+                        "tertiary-container": "#dd7500",
+                        "primary-fixed-dim": "#ffb695",
+                        "on-tertiary-fixed-variant": "#6f3800",
+                        "on-secondary": "#3f2e00",
+                        "on-primary-container": "#4c1a00",
+                        "on-secondary-fixed": "#251a00",
+                        "surface-container-highest": "#373530",
+                        "on-primary": "#571f00",
+                        "surface-dim": "#15130f",
+                        "surface-bright": "#3b3934",
+                        "primary": "#ffb695",
+                        "error": "#ffb4ab",
+                        "on-primary-fixed": "#351000",
+                        "surface-container": "#211f1b",
+                        "surface-container-low": "#1d1b17",
+                        "on-background": "#e7e2da",
+                        "secondary-fixed-dim": "#e5c276",
+                        "outline": "#a78b7f",
+                        "inverse-surface": "#e7e2da",
+                        "on-error-container": "#ffdad6",
+                        "on-secondary-fixed-variant": "#5b4300",
+                        "on-error": "#690005"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "container-max": "1440px",
+                        "margin-edge": "32px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "mono-data": [
+                            "Space Mono"
+                        ],
+                        "label-caps": [
+                            "Space Mono"
+                        ],
+                        "headline-md": [
+                            "Bebas Neue"
+                        ],
+                        "headline-lg": [
+                            "Bebas Neue"
+                        ],
+                        "display-lg": [
+                            "Bebas Neue"
+                        ],
+                        "body-md": [
+                            "Space Mono"
+                        ],
+                        "body-lg": [
+                            "Space Mono"
+                        ],
+                        "headline-lg-mobile": [
+                            "Bebas Neue"
+                        ]
+                    },
+                    "fontSize": {
+                        "mono-data": [
+                            "13px",
+                            {
+                                "lineHeight": "18px",
+                                "fontWeight": "400"
+                            }
+                        ],
+                        "label-caps": [
+                            "12px",
+                            {
+                                "lineHeight": "16px",
+                                "letterSpacing": "0.1em",
+                                "fontWeight": "700"
+                            }
+                        ],
+                        "headline-md": [
+                            "24px",
+                            {
+                                "lineHeight": "28px",
+                                "letterSpacing": "0.02em",
+                                "fontWeight": "400"
+                            }
+                        ],
+                        "headline-lg": [
+                            "48px",
+                            {
+                                "lineHeight": "48px",
+                                "letterSpacing": "0.02em",
+                                "fontWeight": "400"
+                            }
+                        ],
+                        "display-lg": [
+                            "72px",
+                            {
+                                "lineHeight": "72px",
+                                "letterSpacing": "0.05em",
+                                "fontWeight": "400"
+                            }
+                        ],
+                        "body-md": [
+                            "14px",
+                            {
+                                "lineHeight": "20px",
+                                "fontWeight": "400"
+                            }
+                        ],
+                        "body-lg": [
+                            "16px",
+                            {
+                                "lineHeight": "24px",
+                                "letterSpacing": "-0.01em",
+                                "fontWeight": "400"
+                            }
+                        ],
+                        "headline-lg-mobile": [
+                            "32px",
+                            {
+                                "lineHeight": "32px",
+                                "fontWeight": "400"
+                            }
+                        ]
+                    }
+                },
+            }
+        }
+    </script>
+    <style>
+        #contact form input:focus,
+        #contact form textarea:focus {
+            outline: none !important;
+            border-bottom-color: var(--accent-primary) !important;
+            color: var(--accent-primary) !important;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background text-on-background min-h-screen relative font-mono-data text-mono-data monarch-app overflow-x-hidden">
+    <!-- Boot Sequence Overlay -->
+    <div id="boot-sequence">
+        <div class="scanlines absolute inset-0 w-full h-full" style="opacity: 0.05; z-index: 1;"></div>
+        <div id="boot-cursor" style="opacity: 1; display: none;">█</div>
+        <div id="boot-terminal" style="display: block; z-index: 2;">
+            <div id="boot-text-1" style="opacity: 0;">&gt; INTEL LINK INITIALIZED...</div>
+            <div id="boot-text-2" style="opacity: 0;">&gt; ESTABLISHING SECURE PROTOCOLS...</div>
+            <div id="boot-text-3" style="opacity: 0;">&gt; DECLASSIFIED FIELD DOSSIER ENCRYPTED LINK: OPERATIVE HIMAKESH
+            </div>
+            <div id="boot-logs">
+                <div class="boot-log-line">[SYS_CHECK] TENSORFLOW_CORE // COGNITIVE MODEL MATRIX ... OK</div>
+                <div class="boot-log-line">[SYS_CHECK] LANGGRAPH_ORCHESTRATOR // MULTI-AGENT PROTOCOL ... ONLINE</div>
+                <div class="boot-log-line">[SYS_CHECK] QDRANT_VECTOR_DB // SEMANTIC STORAGE MEMORY ... ACTIVE</div>
+                <div class="boot-log-line">[SYS_CHECK] FASTAPI_ROUTER // SECURE REST ENDPOINTS ... STABLE</div>
+                <div class="boot-log-line">[SYS_CHECK] SCIKIT_LEARN // CLUSTERING PIPELINE ... VERIFIED</div>
+            </div>
+        </div>
+        <div id="boot-clearance"
+            style="z-index: 3; display: inline-flex !important; align-items: center !important; justify-content: center !important; padding: 25px 50px !important; line-height: 1 !important; text-transform: uppercase !important; border-width: 5px !important; letter-spacing: 8px !important; font-family: 'Bebas Neue', sans-serif !important; background-color: transparent !important; color: var(--accent-primary) !important; border-style: solid !important; border-color: var(--accent-primary) !important;">
+            <span style="margin-top: 4px;">CLEARANCE GRANTED</span>
+        </div>
+    </div>
+    <!-- Global Overlays -->
+    <div class="scanlines fixed inset-0"></div>
+    <div class="noise fixed inset-0"></div>
+    <!-- TopAppBar -->
+    <header
+        class="fixed top-0 w-full z-40 bg-[rgba(21,19,15,0.8)] backdrop-blur-[10px] border-b border-outline-variant shadow-none transition-all duration-300 ease-in-out">
+        <div class="flex justify-between items-center w-full px-margin-edge py-4 max-w-container-max mx-auto">
+            <div class="font-display-lg text-headline-md tracking-tighter text-primary cursor-pointer"
+                onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                MONARCH // INTEL
+            </div>
+            <nav class="hidden md:flex gap-8 font-label-caps text-label-caps">
+                <button
+                    class="text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-variant/50 px-2 py-1 uppercase"
+                    onclick="handleScroll('profile')">PROFILE</button>
+                <button
+                    class="text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-variant/50 px-2 py-1 uppercase"
+                    onclick="handleScroll('case-files')">CASE FILES</button>
+                <button
+                    class="text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-variant/50 px-2 py-1 uppercase"
+                    onclick="handleScroll('loadout')">CAPABILITIES</button>
+                <button
+                    class="text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-variant/50 px-2 py-1 uppercase"
+                    onclick="handleScroll('contact')">SECURE CHANNEL</button>
+            </nav>
+            <div class="flex items-center gap-4 text-primary">
+                <button class="hover:bg-surface-variant/50 p-1 rounded-sm transition-colors">
+                </button>
+                <button class="md:hidden text-primary">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+            </div>
+        </div>
+    </header>
+    <!-- Main Content Canvas -->
+    <main class="relative">
+        <!-- Hero Section -->
+        <section
+            class="relative min-h-[80vh] flex items-center justify-center pt-24 pb-12 px-4 sm:px-8 overflow-hidden">
+            <!-- Neural Network Canvas -->
+            <canvas class="absolute top-0 left-0 w-full h-full z-[-2]" height="819" id="neural-canvas"
+                width="1280"></canvas>
+            <!-- Watermark -->
+            <div class=""
+                style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 11vw; white-space: nowrap; font-family: var(--font-header); color: rgb(255, 255, 255); opacity: 0.015; z-index: 0; pointer-events: none;">
+                MONARCH CORP // CONFIDENTIAL
+            </div>
+            <!-- Vignette -->
+            <div class="vignette absolute inset-0 z-[-1] pointer-events-none"></div>
+            <!-- Hero Content -->
+            <div class="relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto w-full">
+                <h1
+                    class="font-display-lg text-[140px] leading-none tracking-[0.05em] text-on-background mb-2 drop-shadow-lg">
+                    HIMAKESH</h1>
+                <h2
+                    class="font-mono-data text-body-lg md:text-headline-md text-secondary mb-8 uppercase tracking-widest max-w-2xl mx-auto border-y border-outline-variant py-2 min-h-[48px] flex items-center justify-center">
+                    <span class="flicker" id="decryption-text-target">_# _X_0__#0</span>
+                </h2>
+                <div class="w-3/5 h-px bg-gradient-to-r from-transparent via-outline-variant to-transparent mb-12">
+                </div>
+                <div class="flex flex-col sm:flex-row gap-6 w-full sm:w-auto">
+                    <button
+                        class="btn-glow px-8 py-4 bg-transparent border border-primary text-primary font-display-lg text-headline-md hover:bg-primary/10 transition-all duration-300 w-full sm:w-auto uppercase flex items-center justify-center"
+                        onclick="handleScroll('case-files')">
+                        ACCESS CASE FILES
+                    </button>
+                    <button
+                        class="btn-glow px-8 py-4 bg-transparent border border-primary text-primary font-display-lg text-headline-md hover:bg-primary/10 transition-all duration-300 w-full sm:w-auto uppercase flex items-center justify-center"
+                        onclick="handleScroll('profile')">
+                        VIEW PERSONNEL DOSSIER
+                    </button>
+                </div>
+            </div>
+        </section>
+        <!-- Field Agent Profile -->
+        <section class="h-auto px-[10%] pt-[40px] pb-[20px] relative z-10 max-w-[1440px] mx-auto" id="profile"
+            style="padding: 60px 10% !important; margin: 0 !important; min-height: auto !important;">
+            <div class="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-10 items-stretch">
+                <!-- Left Column: ID Badge -->
+                <div
+                    class="border border-[var(--accent-secondary)] bg-[rgba(17,17,17,0.8)] p-5 relative flex flex-col h-full justify-between">
+                    <div class="photo-brackets bg-[#1a1a1a] relative mb-0 w-full flex-grow" style="min-height: 320px;">
+                        <div class="photo-brackets-tr-bl absolute inset-0"></div>
+                        <img
+                            src="image_0.png"
+                            alt="Field Agent — Himakesh Krishna"
+                            style="width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; position: absolute; inset: 0;"
+                        />
+                    </div>
+                    <div
+                        class="stamp w-full block text-center bg-[rgba(232,101,26,0.1)] border border-[var(--accent-primary)] text-[var(--accent-primary)] py-[10px] text-xl">
+                        CLASSIFIED
+                    </div>
+                </div>
+                <!-- Right Column: Profile Info -->
+                <div class="flex flex-col h-full">
+                    <h2 class="font-display-lg text-[48px] text-on-background mb-6 leading-none">FIELD AGENT PROFILE
+                    </h2>
+                    <div class="font-mono-data text-[14px] text-on-surface-variant mb-10 leading-relaxed max-w-3xl">
+                        Operative specializing in advanced data modeling and pattern extraction in high-stress field
+                        environments. Proven track record in rapid intelligence synthesis. Requires minimal oversight.
+                        Psychological profile indicates high tolerance for ambiguity.
+                    </div>
+                    <div class="space-y-4">
+                        <div
+                            class="border-l-2 border-[var(--accent-secondary)] pl-3 bg-[rgba(255,255,255,0.02)] py-2 flex items-center font-mono-data">
+                            <span class="text-on-surface-variant w-32 uppercase text-xs tracking-wider">SUBJECT
+                                NAME</span>
+                            <span class="text-on-background uppercase">HIMAKESH KRISHNA</span>
+                        </div>
+                        <div
+                            class="border-l-2 border-[var(--accent-secondary)] pl-3 bg-[rgba(255,255,255,0.02)] py-2 flex items-center font-mono-data">
+                            <span class="text-on-surface-variant w-32 uppercase text-xs tracking-wider">Base</span>
+                            <span class="text-on-background uppercase"><u>skull island</u> // Sector 4</span>
+                        </div>
+                        <div
+                            class="border-l-2 border-[var(--accent-secondary)] pl-3 bg-[rgba(255,255,255,0.02)] py-2 flex items-center font-mono-data">
+                            <span class="text-on-surface-variant w-32 uppercase text-xs tracking-wider">Clearance</span>
+                            <span class="text-primary uppercase">LEVEL 3</span>
+                        </div>
+                        <div
+                            class="border-l-2 border-[var(--accent-secondary)] pl-3 bg-[rgba(255,255,255,0.02)] py-2 flex items-center font-mono-data">
+                            <span class="text-on-surface-variant w-32 uppercase text-xs tracking-wider">Status</span>
+                            <span class="text-[#4ade80] uppercase">ACTIVE</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Capabilities Assessment -->
+        <section class="px-[10%] pt-[20px] pb-[40px] relative z-10 max-w-[1440px] mx-auto" id="loadout"
+            style="padding: 60px 10% !important; margin: 0 !important; min-height: auto !important;">
+            <h2 class="font-display-lg text-[48px] text-on-background mb-10 leading-none">OPERATIONAL LOADOUT</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-[20px]">
+                <!-- Col 1 -->
+                <div>
+                    <div class="font-mono-data text-[12px] text-on-surface-variant mb-4 uppercase">
+                        <span class="">[GEN_AI &amp; VECTOR_OPS]</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span
+                            class="bg-[rgba(232,101,26,0.1)] border border-[#e8651a] text-[#e8651a] font-mono-data text-[12px] px-2 py-1 uppercase">LangGraph</span>
+                        <span
+                            class="bg-[rgba(232,101,26,0.1)] border border-[#e8651a] text-[#e8651a] font-mono-data text-[12px] px-2 py-1 uppercase">RAG</span>
+                        <span
+                            class="bg-[rgba(232,101,26,0.1)] border border-[#e8651a] text-[#e8651a] font-mono-data text-[12px] px-2 py-1 uppercase">Qdrant</span>
+                        <span
+                            class="bg-[rgba(232,101,26,0.1)] border border-[#e8651a] text-[#e8651a] font-mono-data text-[12px] px-2 py-1 uppercase">Gemini
+                            API</span>
+                        <span
+                            class="bg-[rgba(232,101,26,0.1)] border border-[#e8651a] text-[#e8651a] font-mono-data text-[12px] px-2 py-1 uppercase">OpenAI
+                            API</span>
+                        <span
+                            class="bg-[rgba(232,101,26,0.1)] border border-[#e8651a] text-[#e8651a] font-mono-data text-[12px] px-2 py-1 uppercase">Hugging
+                            Face</span>
+                        <span
+                            class="bg-[rgba(232,101,26,0.1)] border border-[#e8651a] text-[#e8651a] font-mono-data text-[12px] px-2 py-1 uppercase">LLMs</span>
+                    </div>
+                </div>
+                <!-- Col 2 -->
+                <div>
+                    <div class="font-mono-data text-[12px] text-on-surface-variant mb-4 uppercase">
+                        <span class="">[NEURAL_NETS &amp; ML]</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span
+                            class="bg-[rgba(232,101,26,0.1)] border border-[#e8651a] text-[#e8651a] font-mono-data text-[12px] px-2 py-1 uppercase">PyTorch</span>
+                        <span
+                            class="bg-[rgba(232,101,26,0.1)] border border-[#e8651a] text-[#e8651a] font-mono-data text-[12px] px-2 py-1 uppercase">TensorFlow</span>
+                        <span
+                            class="bg-[rgba(232,101,26,0.1)] border border-[#e8651a] text-[#e8651a] font-mono-data text-[12px] px-2 py-1 uppercase">Keras</span>
+                        <span
+                            class="bg-[rgba(232,101,26,0.1)] border border-[#e8651a] text-[#e8651a] font-mono-data text-[12px] px-2 py-1 uppercase">Scikit-learn</span>
+                        <span
+                            class="bg-[rgba(232,101,26,0.1)] border border-[#e8651a] text-[#e8651a] font-mono-data text-[12px] px-2 py-1 uppercase">XGBoost</span>
+                        <span
+                            class="bg-[rgba(232,101,26,0.1)] border border-[#e8651a] text-[#e8651a] font-mono-data text-[12px] px-2 py-1 uppercase">Random
+                            Forest</span>
+                        <span
+                            class="bg-[rgba(232,101,26,0.1)] border border-[#e8651a] text-[#e8651a] font-mono-data text-[12px] px-2 py-1 uppercase">CNNs</span>
+                    </div>
+                </div>
+                <!-- Col 3 -->
+                <div>
+                    <div class="font-mono-data text-[12px] text-on-surface-variant mb-4 uppercase">
+                        <span class="">[DATA_OPS &amp; SYSTEMS]</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span
+                            class="bg-[rgba(232,101,26,0.1)] border border-[#e8651a] text-[#e8651a] font-mono-data text-[12px] px-2 py-1 uppercase">Python</span>
+                        <span
+                            class="bg-[rgba(232,101,26,0.1)] border border-[#e8651a] text-[#e8651a] font-mono-data text-[12px] px-2 py-1 uppercase">FastAPI</span>
+                        <span
+                            class="bg-[rgba(232,101,26,0.1)] border border-[#e8651a] text-[#e8651a] font-mono-data text-[12px] px-2 py-1 uppercase">Streamlit</span>
+                        <span
+                            class="bg-[rgba(232,101,26,0.1)] border border-[#e8651a] text-[#e8651a] font-mono-data text-[12px] px-2 py-1 uppercase">Pandas</span>
+                        <span
+                            class="bg-[rgba(232,101,26,0.1)] border border-[#e8651a] text-[#e8651a] font-mono-data text-[12px] px-2 py-1 uppercase">NumPy</span>
+                        <span
+                            class="bg-[rgba(232,101,26,0.1)] border border-[#e8651a] text-[#e8651a] font-mono-data text-[12px] px-2 py-1 uppercase">SQL</span>
+                        <span
+                            class="bg-[rgba(232,101,26,0.1)] border border-[#e8651a] text-[#e8651a] font-mono-data text-[12px] px-2 py-1 uppercase">Git</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- CASE FILES — DECLASSIFIED -->
+        <section class="px-[10%] py-[40px] relative z-10 max-w-[1440px] mx-auto" id="case-files" style="padding: 60px 10% !important; margin: 0 !important; min-height: auto !important;">
+        <h2 class="font-display-lg text-[48px] text-[var(--text-main)] leading-none mb-2">CASE FILES — DECLASSIFIED</h2>
+        <p class="font-mono-data text-[12px] text-[var(--accent-secondary)]">SELECT DOSSIER FOR DEEP-DIVE TECHNICAL EXCAVATION</p>
+        <div id="projects-container" class="grid grid-cols-1 md:grid-cols-[repeat(auto-fit,minmax(380px,1fr))] gap-[30px]">
+        <!-- FILE #001 -->
+        <div class="dossier-card flex flex-col min-h-[250px]">
+        <div class="absolute top-6 right-6 text-[#ff2a2a] border-[#ff2a2a] font-mono-data font-bold text-[11px] uppercase border-[1.5px] px-2 py-1 transform -rotate-3">THREAT: CRITICAL</div>
+        <div class="text-[12px] text-on-surface-variant mb-2">FILE #001</div>
+        <div class="font-display-lg text-[28px] text-on-background mb-1 leading-none uppercase">OPERATION: SIGNAL TRACE</div>
+        <div class="text-[12px] text-[var(--accent-secondary)] mb-6">BBC News Multi-Class NLP Classification &amp; Summarization System</div>
+        <div class="mt-auto mb-6">
+        <span class="text-[10px] text-on-surface-variant uppercase tracking-wider block mb-1">Technical Stack</span>
+        <span class="text-[11px] text-on-background">Python, BiLSTM, Word2Vec, T5-small, HuggingFace, Keras, Streamlit.</span>
+        </div>
+        <button class="w-full border border-outline-variant py-3 text-[12px] uppercase tracking-widest hover:bg-[var(--accent-primary)] hover:text-black transition-colors hover:border-[var(--accent-primary)] font-bold btn-glitch" onclick="openModal('FILE #001', 'CRITICAL', '#ff2a2a', 'OPERATION: SIGNAL TRACE', 'BBC News Multi-Class NLP Classification &amp; Summarization System', 'Python, BiLSTM, Word2Vec, T5-small, HuggingFace, Keras, Streamlit.', ['Engineered an end-to-end NLP pipeline for automated news categorization and concise summarization.', 'Trained a BiLSTM model with Word2Vec embeddings achieving 92% classification accuracy across 5 categories.', 'Integrated T5-small via HuggingFace for real-time abstractive summarization of unstructured text.', 'Deployed the solution as a high-performance interactive Streamlit application.'])">
+                        [OPEN FILE]
+                    </button>
+        </div>
+        <!-- FILE #002 -->
+        <div class="dossier-card flex flex-col min-h-[250px]">
+        <div class="absolute top-6 right-6 text-[var(--accent-secondary)] border-[var(--accent-secondary)] font-mono-data font-bold text-[11px] uppercase border-[1.5px] px-2 py-1 transform -rotate-3">THREAT: ELEVATED</div>
+        <div class="text-[12px] text-on-surface-variant mb-2">FILE #002</div>
+        <div class="font-display-lg text-[28px] text-on-background mb-1 leading-none uppercase">VISUAL THREAT IDENTIFICATION SYSTEM</div>
+        <div class="text-[12px] text-[var(--accent-secondary)] mb-6">CIFAR-10 Computer Vision Pipeline with Grad-CAM Explainability</div>
+        <div class="mt-auto mb-6">
+        <span class="text-[10px] text-on-surface-variant uppercase tracking-wider block mb-1">Technical Stack</span>
+        <span class="text-[11px] text-on-background">TensorFlow, Keras, EfficientNetV2M, DenseNet121, Custom CNN, Grad-CAM, Streamlit.</span>
+        </div>
+        <button class="w-full border border-outline-variant py-3 text-[12px] uppercase tracking-widest hover:bg-[var(--accent-primary)] hover:text-black transition-colors hover:border-[var(--accent-primary)] font-bold btn-glitch" onclick="openModal('FILE #002', 'ELEVATED', 'var(--accent-secondary)', 'VISUAL THREAT IDENTIFICATION SYSTEM', 'CIFAR-10 Computer Vision Pipeline with Grad-CAM Explainability', 'TensorFlow, Keras, EfficientNetV2M, DenseNet121, Custom CNN, Grad-CAM, Streamlit.', ['Developed a robust image classification system using transfer learning and custom CNN architectures.', 'Implemented Grad-CAM for visual explainability to highlight influential regions in image predictions.', 'Deployed an interactive web interface for real-time visual analysis.'])">
+                        [OPEN FILE]
+                    </button>
+        </div>
+        <!-- FILE #003 -->
+        <div class="dossier-card flex flex-col min-h-[250px]">
+        <div class="absolute top-6 right-6 text-[var(--accent-primary)] border-[var(--accent-primary)] font-mono-data font-bold text-[11px] uppercase border-[1.5px] px-2 py-1 transform -rotate-3">THREAT: HIGH</div>
+        <div class="text-[12px] text-on-surface-variant mb-2">FILE #003</div>
+        <div class="font-display-lg text-[28px] text-on-background mb-1 leading-none uppercase">CASE FILE 003 — POPULATION PROFILING</div>
+        <div class="text-[12px] text-[var(--accent-secondary)] mb-6">Credit Card Customer Behavioral Segmentation</div>
+        <div class="mt-auto mb-6">
+        <span class="text-[10px] text-on-surface-variant uppercase tracking-wider block mb-1">Technical Stack</span>
+        <span class="text-[11px] text-on-background">Python, K-Means, GMM, Agglomerative, DBSCAN, PCA, Scikit-learn, Streamlit.</span>
+        </div>
+        <button class="w-full border border-outline-variant py-3 text-[12px] uppercase tracking-widest hover:bg-[var(--accent-primary)] hover:text-black transition-colors hover:border-[var(--accent-primary)] font-bold btn-glitch" onclick="openModal('FILE #003', 'HIGH', 'var(--accent-primary)', 'CASE FILE 003 — POPULATION PROFILING', 'Credit Card Customer Behavioral Segmentation', 'Python, K-Means, GMM, Agglomerative, DBSCAN, PCA, Scikit-learn, Streamlit.', ['Applied advanced unsupervised learning techniques for customer segmentation.', 'Utilized dimensionality reduction (PCA) to visualize high-dimensional financial data.', 'Identified distinct behavioral clusters to inform targeted marketing strategies.'])">
+                        [OPEN FILE]
+                    </button>
+        </div>
+        <!-- FILE #004 -->
+        <div class="dossier-card flex flex-col min-h-[250px]">
+        <div class="absolute top-6 right-6 text-[#ff2a2a] border-[#ff2a2a] font-mono-data font-bold text-[11px] uppercase border-[1.5px] px-2 py-1 transform -rotate-3">THREAT: CRITICAL</div>
+        <div class="text-[12px] text-on-surface-variant mb-2">FILE #004</div>
+        <div class="font-display-lg text-[28px] text-on-background mb-1 leading-none uppercase">OPERATION: SYNTHETIC HIVE</div>
+        <div class="text-[12px] text-[var(--accent-secondary)] mb-6">Enterprise Multi-Agent Customer Support Platform</div>
+        <div class="mt-auto mb-6">
+        <span class="text-[10px] text-on-surface-variant uppercase tracking-wider block mb-1">Technical Stack</span>
+        <span class="text-[11px] text-on-background">LangGraph, FastAPI, Gemini, OpenAI, Qdrant, RAG, SQLite.</span>
+        </div>
+        <button class="w-full border border-outline-variant py-3 text-[12px] uppercase tracking-widest hover:bg-[var(--accent-primary)] hover:text-black transition-colors hover:border-[var(--accent-primary)] font-bold btn-glitch" onclick="openModal('FILE #004', 'CRITICAL', '#ff2a2a', 'OPERATION: SYNTHETIC HIVE', 'Enterprise Multi-Agent Customer Support Platform', 'LangGraph, FastAPI, Gemini, OpenAI, Qdrant, RAG, SQLite.', ['Architected a multi-agent generative AI system for complex customer query resolution.', 'Integrated Retrieval-Augmented Generation (RAG) with vector databases for knowledge grounding.', 'Built scalable APIs utilizing state-of-the-art LLMs for autonomous problem solving.'])">
+                        [OPEN FILE]
+                    </button>
+        </div>
+        <!-- FILE #005 -->
+        <div class="dossier-card flex flex-col min-h-[250px]">
+        <div class="absolute top-6 right-6 text-[var(--accent-secondary)] border-[var(--accent-secondary)] font-mono-data font-bold text-[11px] uppercase border-[1.5px] px-2 py-1 transform -rotate-3">THREAT: ELEVATED</div>
+        <div class="text-[12px] text-on-surface-variant mb-2">FILE #005</div>
+        <div class="font-display-lg text-[28px] text-on-background mb-1 leading-none uppercase">CASE FILE 005 — ECONOMIC PRECOGNITION</div>
+        <div class="text-[12px] text-[var(--accent-secondary)] mb-6">Bank Marketing Ensemble Classification &amp; SHAP Analysis</div>
+        <div class="mt-auto mb-6">
+        <span class="text-[10px] text-on-surface-variant uppercase tracking-wider block mb-1">Technical Stack</span>
+        <span class="text-[11px] text-on-background">Scikit-learn, SMOTE, Random Forest, Gradient Boosting, Stacking Ensembles, SHAP.</span>
+        </div>
+        <button class="w-full border border-outline-variant py-3 text-[12px] uppercase tracking-widest hover:bg-[var(--accent-primary)] hover:text-black transition-colors hover:border-[var(--accent-primary)] font-bold btn-glitch" onclick="openModal('FILE #005', 'ELEVATED', 'var(--accent-secondary)', 'CASE FILE 005 — ECONOMIC PRECOGNITION', 'Bank Marketing Ensemble Classification &amp; SHAP Analysis', 'Scikit-learn, SMOTE, Random Forest, Gradient Boosting, Stacking Ensembles, SHAP.', ['Constructed predictive models to forecast marketing campaign success rates.', 'Handled severe class imbalance using SMOTE techniques.', 'Employed SHAP (SHapley Additive exPlanations) for model transparency and feature importance interpretation.'])">
+                        [OPEN FILE]
+                    </button>
+        </div>
+        </div>
+        </section>
+        <!-- Secure Channel -->
+        <section class="px-[10%] py-[80px] relative z-10 max-w-[1440px] mx-auto" id="contact"
+            style="padding: 60px 10% !important; margin: 0 !important; min-height: auto !important;">
+            <h2 class="font-display-lg text-[48px] text-on-background mb-2 leading-none uppercase">ESTABLISH CONTACT //
+                SECURE CHANNEL</h2>
+            <p class="font-mono-data text-[14px] text-[var(--accent-secondary)] mb-10">Transmit your briefing. Response
+                within 24 hours.</p>
+            <form id="contact-form" class="max-w-[600px] flex flex-col gap-6">
+                <div class="flex flex-col gap-2">
+                    <label class="font-mono-data text-[12px] text-[var(--accent-primary)] uppercase">AGENT
+                        IDENTIFIER</label>
+                    <input id="contact-name" class="secure-input w-full py-2 font-mono-data text-[14px] focus:ring-0"
+                        placeholder="Enter designation..."
+                        style='background-color: transparent !important; border-top-width: medium !important; border-right-width: medium !important; border-left-width: medium !important; border-top-style: none !important; border-right-style: none !important; border-left-style: none !important; border-top-color: currentcolor !important; border-right-color: currentcolor !important; border-left-color: currentcolor !important; border-image: initial !important; border-bottom: 2px solid var(--accent-secondary) !important; border-radius: 0px !important; box-shadow: none !important; color: var(--text-main) !important; font-family: "Space Mono", monospace !important; padding: 12px 0px !important;'
+                        type="text" required />
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="font-mono-data text-[12px] text-[var(--accent-primary)] uppercase">SECURE
+                        FREQUENCY</label>
+                    <input id="contact-email" class="secure-input w-full py-2 font-mono-data text-[14px] focus:ring-0"
+                        placeholder="Enter frequency (email)..."
+                        style='background-color: transparent !important; border-top-width: medium !important; border-right-width: medium !important; border-left-width: medium !important; border-top-style: none !important; border-right-style: none !important; border-left-style: none !important; border-top-color: currentcolor !important; border-right-color: currentcolor !important; border-left-color: currentcolor !important; border-image: initial !important; border-bottom: 2px solid var(--accent-secondary) !important; border-radius: 0px !important; box-shadow: none !important; color: var(--text-main) !important; font-family: "Space Mono", monospace !important; padding: 12px 0px !important;'
+                        type="email" required />
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="font-mono-data text-[12px] text-[var(--accent-primary)] uppercase">TRANSMISSION
+                        LOG</label>
+                    <textarea id="contact-message"
+                        class="secure-input w-full py-2 font-mono-data text-[14px] min-h-[100px] resize-none focus:ring-0"
+                        placeholder="Enter briefing details..."
+                        style='background-color: transparent !important; border-top-width: medium !important; border-right-width: medium !important; border-left-width: medium !important; border-top-style: none !important; border-right-style: none !important; border-left-style: none !important; border-top-color: currentcolor !important; border-right-color: currentcolor !important; border-left-color: currentcolor !important; border-image: initial !important; border-bottom: 2px solid var(--accent-secondary) !important; border-radius: 0px !important; box-shadow: none !important; color: var(--text-main) !important; font-family: "Space Mono", monospace !important; padding: 12px 0px !important;'
+                        required></textarea>
+                </div>
+                <div class="font-mono-data text-[12px] min-h-[20px] mb-[20px] transition-colors duration-300"
+                    id="transmission-log"></div><button id="contact-submit"
+                    class="btn-glitch bg-[var(--accent-primary)] text-black font-display-lg text-[24px] py-4 px-8 uppercase tracking-widest self-start transition-colors border border-[var(--accent-primary)]"
+                    type="submit">
+                    [ TRANSMIT ]
+                </button>
+            </form>
+        </section>
+        <section class="px-[10%] pb-[80px] relative z-10 max-w-[1440px] mx-auto"
+            style="padding: 60px 10% !important; margin: 0 !important; min-height: auto !important;">
+            <h3 class="font-headline-md text-[24px] text-[var(--accent-secondary)] mb-[15px] uppercase"
+                style="font-size: 40px; line-height: 1; margin-top: 0px;">SECURE TRANSMISSION ENDPOINTS</h3>
+            <div class="flex flex-row gap-[30px] justify-start items-center">
+                <style>
+                    .secure-link {
+                        font-family: 'Space Mono', monospace;
+                        font-size: 13px;
+                        color: var(--text-main);
+                        text-decoration: none;
+                        background: rgba(255, 255, 255, 0.03);
+                        border: 1px solid rgba(196, 163, 90, 0.3);
+                        padding: 10px 20px;
+                        letter-spacing: 1px;
+                        transition: all 0.2s ease-in-out;
+                        cursor: pointer;
+                        position: relative;
+                        overflow: hidden;
+                        display: inline-block;
+                    }
+
+                    .secure-link:hover {
+                        background: rgba(232, 101, 26, 0.15);
+                        border-color: var(--accent-primary);
+                        color: var(--accent-primary);
+                        box-shadow: 0 0 10px rgba(232, 101, 26, 0.2);
+                        inset 0 0 10px rgba(232, 101, 26, 0.1);
+                        text-shadow: 0 0 5px rgba(232, 101, 26, 0.5);
+                    }
+                </style><a id="footer-github" class="secure-link" href="#" target="_blank">[ GITHUB_REPO ]</a><a
+                    id="footer-linkedin" class="secure-link" href="#" target="_blank">[
+                    LINKEDIN_NETWORK ]</a><a id="footer-instagram" class="secure-link" href="#" target="_blank">[
+                    INSTAGRAM_ARCHIVE ]</a>
+            </div>
+        </section>
+        <footer
+            class="relative z-10 py-6 mt-10 text-center font-mono-data text-[10px] text-on-surface-variant opacity-50 uppercase tracking-widest border-t border-[#222]">
+            MONARCH INTELLIGENCE NETWORK // ALL FILES DECLASSIFIED 2026
+        </footer>
+        <!-- Inline Modal Implementation -->
+        <div class="fixed inset-0 z-[100] bg-[rgba(0,0,0,0.85)] backdrop-blur-sm items-center justify-center p-4 hidden" id="dossier-modal">
+        <div class="bg-[var(--bg-surface)] border border-[var(--accent-primary)] max-w-[800px] w-full p-[40px] relative">
+        <button class="absolute top-6 right-6 font-mono-data text-[12px] text-on-surface-variant hover:text-[var(--accent-primary)] transition-colors" onclick="closeModal()">
+                    [X CLOSE DOSSIER]
+                </button>
+        <div class="flex items-center gap-4 mb-4 mt-2">
+        <span class="font-mono-data text-[14px] text-on-surface-variant" id="modal-file">FILE #004</span>
+        <span class="font-mono-data text-[12px] font-bold px-2 py-1 border border-current uppercase" id="modal-threat" style="color: rgb(255, 42, 42); border-color: rgb(255, 42, 42);">THREAT: CRITICAL</span>
+        </div>
+        <h3 class="font-display-lg text-[48px] leading-none mb-2 text-on-background uppercase" id="modal-title">OPERATION: SYNTHETIC HIVE</h3>
+        <p class="font-mono-data text-[14px] text-[var(--accent-secondary)] mb-8" id="modal-subtitle">Enterprise Multi-Agent Customer Support Platform</p>
+        <div class="bg-[#1a1a1a] p-4 border-l-2 border-[var(--accent-primary)] mb-6">
+        <span class="block font-mono-data text-[10px] text-on-surface-variant uppercase tracking-widest mb-2">INTELLIGENCE STACK EXCAVATION</span>
+        <p class="font-mono-data text-[13px] text-on-background leading-relaxed" id="modal-tech">LangGraph, FastAPI, Gemini, OpenAI, Qdrant, RAG, SQLite.</p>
+        </div>
+        <div class="mb-8">
+        <span class="block font-mono-data text-[13px] text-[var(--accent-secondary)] uppercase tracking-widest mb-3 font-bold">MISSION DEBRIEF</span>
+        <div class="mission-debrief font-mono-data text-[13px] leading-[1.6] text-[var(--text-main)]" id="modal-bullets">
+        <ul>
+        <li class="">Architected a multi-agent generative AI system for complex customer query resolution.</li>
+        <li class="">Integrated Retrieval-Augmented Generation (RAG) with vector databases for knowledge grounding.</li>
+        <li class="">Built scalable APIs utilizing state-of-the-art LLMs for autonomous problem solving.</li>
+        </ul>
+        </div>
+        </div>
+        <div class="flex flex-col gap-3 mt-8 pt-6 border-t border-[#333]">
+        <a id="modal-streamlit-btn" target="_blank" rel="noopener noreferrer" class="w-full block text-center border border-outline-variant py-3 text-[12px] uppercase tracking-widest hover:bg-[var(--accent-primary)] hover:text-black transition-colors hover:border-[var(--accent-primary)] font-bold btn-glitch" style="text-decoration: none !important; display: block;">
+                        [LAUNCH LIVE STREAMLIT TRANSMISSION]
+                    </a>
+        <div id="modal-streamlit-error" class="font-mono-data text-[11px] text-[#ff2a2a] uppercase tracking-widest text-center hidden">[ ERROR: FILE NOT DEPLOYED — TRANSMISSION UNAVAILABLE ]</div>
+        <a id="modal-github-btn" target="_blank" rel="noopener noreferrer" class="w-full block text-center border border-outline-variant py-3 text-[12px] uppercase tracking-widest hover:bg-[var(--accent-primary)] hover:text-black transition-colors hover:border-[var(--accent-primary)] font-bold btn-glitch" style="text-decoration: none !important; display: block;">
+                        [ACCESS DECLASSIFIED REPOSITORY]
+                    </a>
+        <div id="modal-github-error" class="font-mono-data text-[11px] text-[#ff2a2a] uppercase tracking-widest text-center hidden">[ ERROR: REPOSITORY UNDER CONSTRUCTION — ACCESS DENIED ]</div>
+        </div>
+        </div>
+        </div>
+        <!-- Scripts -->
+        <script>
+            // Centralized Social Endpoints CONFIG block
+            const CONFIG = {
+                github: "https://github.com/davidkumar355",
+                linkedin: "https://www.linkedin.com/in/himakesh-krishna",
+                instagram: "https://www.instagram.com/himakesh.krishna"
+            };
+
+            // GSAP Boot Sequence
+            document.addEventListener("DOMContentLoaded", (event) => {
+                gsap.registerPlugin(TextPlugin);
+                loadProjects();
+
+                // Wire CONFIG to footer links
+                document.getElementById('footer-github').href = CONFIG.github;
+                document.getElementById('footer-linkedin').href = CONFIG.linkedin;
+                document.getElementById('footer-instagram').href = CONFIG.instagram;
+
+                const bootSequence = document.getElementById('boot-sequence');
+                const cursor = document.getElementById('boot-cursor');
+                const terminal = document.getElementById('boot-terminal');
+                const text1 = document.getElementById('boot-text-1');
+                const text2 = document.getElementById('boot-text-2');
+                const text3 = document.getElementById('boot-text-3');
+                const logLines = document.querySelectorAll('.boot-log-line');
+                const clearance = document.getElementById('boot-clearance');
+
+                let tl = gsap.timeline({
+                    onComplete: () => {
+                        bootSequence.style.display = 'none';
+                        // Trigger any post-boot animations here if needed
+                    }
+                });
+
+                // Initialize terminal display
+                tl.set(cursor, { display: 'block' }, 0);
+                tl.set(terminal, { display: 'block' }, 0);
+
+                // Cursor Blink
+                tl.to(cursor, { opacity: 0, repeat: 3, duration: 0.3, yoyo: true });
+                tl.set(cursor, { display: 'none' });
+
+                // Handshake Logs
+                const handshakeLogs = [text1, text2, text3];
+                tl.to(handshakeLogs, { opacity: 1, duration: 0.05, stagger: 0.25 }, "+=0.2");
+
+                // Data Flood
+                tl.to(logLines, { opacity: 1, duration: 0.05, stagger: 0.15 }, "+=0.3");
+
+                // Clearance Stamp
+                tl.set(clearance, { scale: 0.8 });
+                tl.to(clearance, { opacity: 1, scale: 1, duration: 0.2 }, "+=0.4");
+
+                // Dissolve/Fade Out
+                tl.to(bootSequence, { scale: 1.1, filter: 'blur(10px)', opacity: 0, duration: 0.5 }, "+=0.6");
+
+            });
+
+            // Navigation Logic
+            const handleScroll = (elementId) => {
+                const element = document.getElementById(elementId);
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            };
+
+            // CRT Interference on Scroll Effect - Updated to toggle .is-scrolling class on .monarch-app
+            let scrollTimeout;
+            let lastScrollY = window.scrollY;
+            const appWrapper = document.querySelector('.monarch-app');
+
+            window.addEventListener('scroll', () => {
+                if (Math.abs(window.scrollY - lastScrollY) > 5) {
+                    appWrapper.classList.add('is-scrolling');
+                    lastScrollY = window.scrollY;
+                    clearTimeout(scrollTimeout);
+                    scrollTimeout = setTimeout(() => {
+                        appWrapper.classList.remove('is-scrolling');
+                    }, 150);
+                }
+            }, { passive: true });
+
+            // Decryption Text Logic
+            const phrases = ["DATA SCIENTIST", "ML ENGINEER", "GEN AI ENGINEER", "FIELD ANALYST", "PATTERN ARCHITECT", "VISUAL INTELLIGENCE"];
+            const symbols = ["0", "1", "X", "_", "#", "?", ">"];
+            let currentPhraseIndex = 0;
+            const targetElement = document.getElementById('decryption-text-target');
+
+            function getRandomSymbol() {
+                return symbols[Math.floor(Math.random() * symbols.length)];
+            }
+
+            function scrambleText(targetPhrase, callback) {
+                let iterations = 0;
+                const maxIterations = 15; // 600ms / 40ms = 15
+
+                targetElement.classList.add('flicker');
+
+                const interval = setInterval(() => {
+                    const scrambled = targetPhrase.split('').map((char, index) => {
+                        if (char === " ") return " ";
+                        // Probability of showing real character increases as we approach end of scramble
+                        if (iterations > maxIterations * 0.8 && Math.random() > 0.5) return char;
+                        return getRandomSymbol();
+                    }).join('');
+
+                    targetElement.innerText = scrambled;
+                    iterations++;
+
+                    if (iterations >= maxIterations) {
+                        clearInterval(interval);
+                        targetElement.innerText = targetPhrase;
+                        targetElement.classList.remove('flicker');
+                        if (callback) callback();
+                    }
+                }, 40);
+            }
+
+            function cyclePhrases() {
+                currentPhraseIndex = (currentPhraseIndex + 1) % phrases.length;
+                scrambleText(phrases[currentPhraseIndex]);
+            }
+
+            // Initial setup and loop
+            targetElement.innerText = phrases[0];
+            setInterval(cyclePhrases, 3500);
+
+            // Neural Network Canvas Logic
+            const canvas = document.getElementById('neural-canvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            let mouse = { x: null, y: null };
+            let animationId = null;
+
+            class Particle {
+                constructor() {
+                    this.baseX = Math.random() * canvas.width;
+                    this.baseY = Math.random() * canvas.height;
+                    // Constant underlying velocities
+                    this.vx = (Math.random() - 0.5) * 0.8;
+                    this.vy = (Math.random() - 0.5) * 0.8;
+                    // Fixed radius between 1.5 and 2
+                    this.radius = 1.5 + Math.random() * 0.5;
+                    // Current visual positions (including offsets)
+                    this.x = this.baseX;
+                    this.y = this.baseY;
+                }
+
+                update() {
+                    // Constant velocity movement
+                    this.baseX += this.vx;
+                    this.baseY += this.vy;
+
+                    // Bounce off boundaries (multiply velocity by -1)
+                    if (this.baseX < 0 || this.baseX > canvas.width) this.vx *= -1;
+                    if (this.baseY < 0 || this.baseY > canvas.height) this.vy *= -1;
+
+                    // Reset visual coordinates to base
+                    this.x = this.baseX;
+                    this.y = this.baseY;
+
+                    // Temporary mouse repulsion (coordinate offset)
+                    if (mouse.x !== null && mouse.y !== null) {
+                        const dx = this.x - mouse.x;
+                        const dy = this.y - mouse.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        const maxDistance = 150;
+
+                        if (distance < maxDistance) {
+                            const force = (maxDistance - distance) / maxDistance;
+                            const angle = Math.atan2(dy, dx);
+                            // Temporarily offset visual position
+                            this.x += Math.cos(angle) * force * 50;
+                            this.y += Math.sin(angle) * force * 50;
+                        }
+                    }
+                }
+
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    // Higher visibility: rgba(232, 101, 26, 0.7)
+                    ctx.fillStyle = 'rgba(232, 101, 26, 0.7)';
+                    ctx.fill();
+                }
+            }
+
+            function init() {
+                particles = [];
+                const count = Math.min(Math.floor((canvas.width * canvas.height) / 10000), 100);
+                for (let i = 0; i < count; i++) {
+                    particles.push(new Particle());
+                }
+            }
+
+            function connect() {
+                const maxDist = 120;
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+
+                        if (dist < maxDist) {
+                            // Line stroke: rgba(232, 101, 26, 0.5) max opacity, mapped to distance
+                            const opacity = (1 - dist / maxDist) * 0.5;
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.strokeStyle = `rgba(232, 101, 26, ${opacity})`;
+                            ctx.lineWidth = 1;
+                            ctx.stroke();
+                        }
+                    }
+                }
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                particles.forEach(p => {
+                    p.update();
+                    p.draw();
+                });
+
+                connect();
+
+                // Use a recursive requestAnimationFrame loop
+                animationId = requestAnimationFrame(animate);
+            }
+
+            function resize() {
+                // Correctly cleanup old animation if resizing
+                if (animationId) cancelAnimationFrame(animationId);
+
+                const parent = canvas.parentElement;
+                canvas.width = parent.clientWidth;
+                canvas.height = parent.clientHeight;
+
+                init();
+                animate();
+            }
+
+            window.addEventListener('resize', resize);
+            window.addEventListener('mousemove', (e) => {
+                const rect = canvas.getBoundingClientRect();
+                mouse.x = e.clientX - rect.left;
+                mouse.y = e.clientY - rect.top;
+            });
+            window.addEventListener('mouseleave', () => {
+                mouse.x = null;
+                mouse.y = null;
+            });
+
+            // Handle unmount/visibility cleanup (simulated for plain HTML)
+            window.addEventListener('beforeunload', () => {
+                if (animationId) cancelAnimationFrame(animationId);
+            });
+
+            resize();
+
+            // Global array to store loaded projects data
+            var loadedProjects = [];
+
+            async function loadProjects() {
+                try {
+                    const response = await fetch('http://127.0.0.1:8000/api/projects');
+                    if (!response.ok) throw new Error('API offline');
+                    loadedProjects = await response.json();
+
+                    const container = document.getElementById('projects-container');
+                    const html = loadedProjects.map((proj, index) => {
+                        const isCritical = proj.status.includes('CRITICAL');
+                        const isHigh    = proj.status.includes('HIGH');
+                        const threatClass = isCritical
+                            ? 'text-[#ff2a2a] border-[#ff2a2a]'
+                            : (isHigh ? 'text-[var(--accent-primary)] border-[var(--accent-primary)]'
+                                      : 'text-[var(--accent-secondary)] border-[var(--accent-secondary)]');
+
+                        return `
+                        <div class="dossier-card flex flex-col min-h-[250px]">
+                            <div class="absolute top-6 right-6 ${threatClass} font-mono-data font-bold text-[11px] uppercase border-[1.5px] px-2 py-1 transform -rotate-3">
+                                ${proj.status}
+                            </div>
+                            <div class="text-[12px] text-on-surface-variant mb-2">${proj.file_number}</div>
+                            <div class="font-display-lg text-[28px] text-on-background mb-1 leading-none uppercase">${proj.title}</div>
+                            <div class="text-[12px] text-[var(--accent-secondary)] mb-6">${proj.description}</div>
+                            <div class="mt-auto mb-6">
+                                <span class="text-[10px] text-on-surface-variant uppercase tracking-wider block mb-1">Technical Stack</span>
+                                <span class="text-[11px] text-on-background">${proj.tech_stack.join(', ')}</span>
+                            </div>
+                            <button class="w-full border border-outline-variant py-3 text-[12px] uppercase tracking-widest hover:bg-[var(--accent-primary)] hover:text-black transition-colors hover:border-[var(--accent-primary)] font-bold btn-glitch" onclick="openModal(${index})">
+                                [OPEN FILE]
+                            </button>
+                        </div>
+                        `;
+                    }).join('');
+
+                    container.innerHTML = html;
+                } catch (err) {
+                    console.error('Error loading projects:', err);
+                    // On API error, keep static mock cards already defined in HTML.
+                }
+            }
+
+            // Modal Logic — reads all data directly from the API response (loadedProjects)
+            function openModal(index) {
+                const proj = loadedProjects[index];
+                if (!proj) return;
+
+                const isCritical = proj.status.includes('CRITICAL');
+                const isHigh    = proj.status.includes('HIGH');
+                const color = isCritical ? '#ff2a2a'
+                            : (isHigh ? 'var(--accent-primary)' : 'var(--accent-secondary)');
+
+                // Header
+                document.getElementById('modal-file').innerText = proj.file_number;
+                const threatEl = document.getElementById('modal-threat');
+                threatEl.innerText = proj.status;
+                threatEl.style.color = color;
+                threatEl.style.borderColor = color;
+                document.getElementById('modal-title').innerText = proj.title;
+                document.getElementById('modal-subtitle').innerText = proj.description;
+                document.getElementById('modal-tech').innerText = proj.tech_stack.join(', ');
+
+                // Mission Debrief Bullets
+                const bulletsContainer = document.getElementById('modal-bullets');
+                if (proj.bullets && proj.bullets.length > 0) {
+                    bulletsContainer.innerHTML = '<ul>' + proj.bullets.map(b => `<li>${b}</li>`).join('') + '</ul>';
+                } else {
+                    bulletsContainer.innerHTML = '';
+                }
+
+                // Streamlit button
+                const streamlitBtn = document.getElementById('modal-streamlit-btn');
+                const streamlitErr = document.getElementById('modal-streamlit-error');
+                if (proj.streamlit_url) {
+                    streamlitBtn.href = proj.streamlit_url;
+                    streamlitBtn.style.opacity = '1';
+                    streamlitBtn.style.pointerEvents = 'auto';
+                    streamlitBtn.style.cursor = 'pointer';
+                    streamlitErr.classList.add('hidden');
+                } else {
+                    streamlitBtn.removeAttribute('href');
+                    streamlitBtn.style.opacity = '0.35';
+                    streamlitBtn.style.pointerEvents = 'none';
+                    streamlitBtn.style.cursor = 'not-allowed';
+                    streamlitErr.classList.remove('hidden');
+                }
+
+                // GitHub button
+                const githubBtn = document.getElementById('modal-github-btn');
+                const githubErr = document.getElementById('modal-github-error');
+                if (proj.github_url) {
+                    githubBtn.href = proj.github_url;
+                    githubBtn.style.opacity = '1';
+                    githubBtn.style.pointerEvents = 'auto';
+                    githubBtn.style.cursor = 'pointer';
+                    githubErr.classList.add('hidden');
+                } else {
+                    githubBtn.removeAttribute('href');
+                    githubBtn.style.opacity = '0.35';
+                    githubBtn.style.pointerEvents = 'none';
+                    githubBtn.style.cursor = 'not-allowed';
+                    githubErr.classList.remove('hidden');
+                }
+
+                const modal = document.getElementById('dossier-modal');
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+
+            function closeModal() {
+                const modal = document.getElementById('dossier-modal');
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+
+            // Backdrop Click Closes Modal
+            document.getElementById('dossier-modal').addEventListener('click', (e) => {
+                if (e.target === document.getElementById('dossier-modal')) {
+                    closeModal();
+                }
+            });
+
+            // Contact Form Submission Handler
+            document.getElementById('contact-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const name = document.getElementById('contact-name').value.trim();
+                const email = document.getElementById('contact-email').value.trim();
+                const message = document.getElementById('contact-message').value.trim();
+                const logStatus = document.getElementById('transmission-log');
+                const submitBtn = document.getElementById('contact-submit');
+
+                if (!name || !email || !message) {
+                    logStatus.style.color = '#ff2a2a';
+                    logStatus.innerText = 'STATUS ERROR: ALL BRIEFING DATA MUST BE POPULATED.';
+                    return;
+                }
+
+                // Visual loading feedback
+                logStatus.style.color = 'var(--accent-secondary)';
+                logStatus.innerText = 'STATUS: INITIATING SECURE ENVELOPE HANDSHAKE...';
+                submitBtn.disabled = true;
+                submitBtn.innerText = '[ TRANSMITTING... ]';
+
+                try {
+                    const response = await fetch('http://127.0.0.1:8000/api/transmit', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            name: name,
+                            frequency: email,
+                            transmission_log: message
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        logStatus.style.color = '#4ade80'; // Cyber Green
+                        logStatus.innerText = `STATUS SUCCESS: BRIEFING ROUTED SECURELY. HASH: ${data.frequency_hash}`;
+                        document.getElementById('contact-form').reset();
+                    } else {
+                        throw new Error(data.detail || 'Transmission failed.');
+                    }
+                } catch (error) {
+                    console.error('Transmission error:', error);
+                    logStatus.style.color = '#ff2a2a'; // Cyber Red
+                    logStatus.innerText = `STATUS CRITICAL: NODE FAULT. BRIEFING CORRUPTED OR OFFLINE.`;
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = '[ TRANSMIT ]';
+                }
+            });
+        </script>
+    </main>
+</body>
+
+</html>

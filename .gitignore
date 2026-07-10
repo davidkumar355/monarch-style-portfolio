@@ -1,0 +1,35 @@
+# ─── Secrets ───────────────────────────────────────────────────────────────
+.env
+*.env.local
+
+# ─── Python ────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+
+# ─── Virtual environments ──────────────────────────────────────────────────
+venv/
+.venv/
+env/
+
+# ─── SQLite (local dev only — production uses Supabase PostgreSQL) ─────────
+*.db
+*.sqlite
+*.sqlite3
+backend/projects.db
+
+# ─── Testing / Cache ───────────────────────────────────────────────────────
+.pytest_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# ─── OS ────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ─── Sensitive / Dev Artifacts (never commit these) ────────────────────────
+vercel_recovery-codes.txt
+*.zip
+reference_ui.html
+screenshot.png
