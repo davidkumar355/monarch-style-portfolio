@@ -5,7 +5,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, EmailStr
 from typing import List, Optional
 from dotenv import load_dotenv
+import sys
 import resend
+# Ensure Vercel serverless function can find modules in the same api/ directory
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
 from database import init_db, seed_db, get_all_projects
 
 # Load environment variables

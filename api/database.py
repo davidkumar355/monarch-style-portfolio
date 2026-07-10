@@ -1,4 +1,4 @@
-﻿"""
+"""
 database.py — Single Source of Truth for Monarch Intelligence Network Projects
 
 DATABASE STRATEGY:
@@ -18,9 +18,14 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # ─── Database Connection ──────────────────────────────────────────────────────
-# Supabase provides a postgres:// URL; SQLAlchemy 2.x requires postgresql://
 _raw_url = os.getenv("DATABASE_URL", "sqlite:///./projects.db")
+
+# If running on Vercel and using SQLite, redirect it to /tmp to avoid Read-Only filesystem errors
+if os.getenv("VERCEL") and _raw_url.startswith("sqlite"):
+    _raw_url = "sqlite:////tmp/projects.db"
+
 DATABASE_URL = _raw_url.replace("postgres://", "postgresql://", 1)
+
 
 engine = create_engine(DATABASE_URL)
 
