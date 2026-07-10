@@ -93,16 +93,16 @@ def read_index_html():
         return FileResponse("index.html")
     raise HTTPException(status_code=404, detail="index.html not found on this node.")
 
-@app.get("/image_0.png")
+@app.get("/updated_image2.png")
 def read_image():
     """Serves the agent profile photo directly from FastAPI."""
     parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    image_path = os.path.join(parent_dir, "image_0.png")
+    image_path = os.path.join(parent_dir, "updated_image2.png")
     if os.path.exists(image_path):
         return FileResponse(image_path, media_type="image/png")
-    if os.path.exists("image_0.png"):
-        return FileResponse("image_0.png", media_type="image/png")
-    raise HTTPException(status_code=404, detail="image_0.png not found on this node.")
+    if os.path.exists("updated_image2.png"):
+        return FileResponse("updated_image2.png", media_type="image/png")
+    raise HTTPException(status_code=404, detail="updated_image2.png not found on this node.")
 
 @app.get("/logo.png")
 def read_logo():
